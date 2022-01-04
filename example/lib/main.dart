@@ -98,50 +98,72 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Form(
-          child: ListView(
-            children: <Widget>[
-              SizedBox(height: 16),
-              TextFieldSearch(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(20),
+          // Center is a layout widget. It takes a single child and positions it
+          // in the middle of the parent.
+          child: Form(
+            child: ListView(
+              children: <Widget>[
+                SizedBox(height: 16),
+                TextFieldSearch(
                   label: 'Simple Future List',
                   controller: myController2,
                   future: () {
                     return fetchSimpleData();
-                  }),
-              SizedBox(height: 16),
-              TextFieldSearch(
-                label: 'Complex Future List',
-                controller: myController3,
-                future: () {
-                  return fetchComplexData();
-                },
-                getSelectedValue: (item) {
-                  print(item);
-                },
-                minStringLength: 5,
-                textStyle: TextStyle(color: Colors.red),
-                decoration: InputDecoration(hintText: 'Search For Something'),
-              ),
-              SizedBox(height: 16),
-              TextFieldSearch(
-                  initialList: _testList,
-                  label: 'Simple List',
-                  controller: myController),
-              SizedBox(height: 16),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Description'),
-              ),
-            ],
+                  },
+                  customWidget: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.red,
+                        radius: 18,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Username"),
+                          Text("Email"),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16),
+                TextFieldSearch(
+                  label: 'Complex Future List',
+                  controller: myController3,
+                  future: () {
+                    return fetchComplexData();
+                  },
+                  getSelectedValue: (item) {
+                    print(item);
+                  },
+                  minStringLength: 5,
+                  textStyle: TextStyle(color: Colors.red),
+                  decoration: InputDecoration(hintText: 'Search For Something'),
+                ),
+                SizedBox(height: 16),
+                TextFieldSearch(
+                    initialList: _testList,
+                    label: 'Simple List',
+                    controller: myController),
+                SizedBox(height: 16),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Description'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
