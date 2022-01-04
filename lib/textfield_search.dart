@@ -10,6 +10,7 @@ class TextFieldSearch extends StatefulWidget {
   final TextEditingController controller;
   final Function future;
   final Function getSelectedValue;
+  final Widget customWidget;
   final InputDecoration decoration;
   final TextStyle textStyle;
   final int minStringLength;
@@ -17,13 +18,14 @@ class TextFieldSearch extends StatefulWidget {
   const TextFieldSearch(
       {Key key,
       this.initialList,
+      this.customWidget,
       @required this.label,
       @required this.controller,
       this.textStyle,
       this.future,
       this.getSelectedValue,
       this.decoration,
-      this.minStringLength = 2 })
+      this.minStringLength = 2})
       : super(key: key);
 
   @override
@@ -37,7 +39,7 @@ class _TextFieldSearchState extends State<TextFieldSearch> {
   List filteredList = new List();
   bool hasFuture = false;
   bool loading = false;
-  final _debouncer = Debouncer(milliseconds: 1000);
+  final _debouncer = Debouncer(milliseconds: 600);
   bool itemsFound;
 
   void resetList() {
@@ -240,10 +242,15 @@ class _TextFieldSearchState extends State<TextFieldSearch> {
               // remove the focus node so we aren't editing the text
               FocusScope.of(context).unfocus();
             },
-            child: ListTile(
-                title: widget.getSelectedValue != null
-                    ? Text(filteredList[i].label)
-                    : Text(filteredList[i])));
+            child: widget.customWidget
+            // ListTile(
+            // title: widget.getSelectedValue != null
+            //     ? Text(filteredList[i].label)
+            //     : Text(filteredList[i])
+            // title: Text("hello")
+
+            // )
+            );
       },
       padding: EdgeInsets.zero,
       shrinkWrap: true,
@@ -252,12 +259,15 @@ class _TextFieldSearchState extends State<TextFieldSearch> {
 
   Widget _loadingIndicator() {
     return Container(
-      width: 50,
-      height: 50,
+      // width: 50,
+      // height: 50,
       child: Center(
-        child: CircularProgressIndicator(
-          valueColor:
-              AlwaysStoppedAnimation<Color>(Theme.of(context).accentColor),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircularProgressIndicator(
+              // valueColor:
+              //     AlwaysStoppedAnimation<Color>(Theme.of(context).accentColor),
+              ),
         ),
       ),
     );
@@ -310,9 +320,22 @@ class _TextFieldSearchState extends State<TextFieldSearch> {
     return CompositedTransformTarget(
       link: this._layerLink,
       child: TextField(
+        onEditingComplete: () {
+          _debouncer.run(() {
+            setState(() {
+              if (hasFuture) {
+                updateGetItems();
+              } else {
+                updateList();
+              }
+            });
+          });
+        },
         controller: widget.controller,
         focusNode: this._focusNode,
-        decoration: widget.decoration != null ? widget.decoration : InputDecoration(labelText: widget.label),
+        decoration: widget.decoration != null
+            ? widget.decoration
+            : InputDecoration(labelText: widget.label),
         style: widget.textStyle,
         onChanged: (String value) {
           // every time we make a change to the input, update the list
